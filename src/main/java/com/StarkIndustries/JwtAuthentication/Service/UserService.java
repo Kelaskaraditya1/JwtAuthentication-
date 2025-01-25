@@ -3,6 +3,10 @@ package com.StarkIndustries.JwtAuthentication.Service;
 import com.StarkIndustries.JwtAuthentication.Models.Users;
 import com.StarkIndustries.JwtAuthentication.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -17,11 +21,14 @@ public class UserService {
     @Autowired
     public UserRepository userRepository;
 
+    @Autowired
+    public JwtService jwtService;
+
+    @Autowired
+    public AuthenticationManager authenticationManager;
+
     public Users findByUsername(String username){
-        Users users = userRepository.findByUsername(username);
-        if(userRepository.existsById(users.getUserId()))
-            return users;
-        return null;
+        return userRepository.findByUsername(username);
     }
 
     public boolean signup(Users users){
@@ -36,10 +43,11 @@ public class UserService {
         return false;
     }
 
-    public boolean login(Users users){
-        if(userRepository.findByUsername(users.getUsername())!=null)
-            return true;
-        return false;
+    public String login(Users users){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(users.getUsername(),users.getPassword()));
+        if(authentication.isAuthenticated())
+            return jwtService.encodeUsername(users.getUsername());
+        return "false";
     }
 
     public List<Users> getUsers(){

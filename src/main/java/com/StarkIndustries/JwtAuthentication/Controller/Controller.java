@@ -33,8 +33,8 @@ public class Controller {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Users users){
-        if(userService.login(users))
-            return ResponseEntity.status(HttpStatus.OK).body("User Login Successfully!!");
+        if(userService.login(users)!="false")
+            return ResponseEntity.status(HttpStatus.OK).body("User Login Successfully!!\n "+userService.login(users));
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to Login!!");
     }
 
