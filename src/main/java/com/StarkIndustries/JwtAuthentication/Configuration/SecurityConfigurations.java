@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,10 +31,11 @@ public class SecurityConfigurations {
     public JwtFilter jwtFilter;
 
     @Bean
+    @Primary
     public SecurityFilterChain getSecurityFilterChain(HttpSecurity security) throws Exception{
         return security.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(request->
-                        request.requestMatchers("signup","login/**")
+                        request.requestMatchers("/signup","/login")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())

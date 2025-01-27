@@ -43,11 +43,14 @@ public class UserService {
         return false;
     }
 
-    public String login(Users users){
+    public boolean login(Users users){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(users.getUsername(),users.getPassword()));
-        if(authentication.isAuthenticated())
-            return jwtService.encodeUsername(users.getUsername());
-        return "false";
+        if(authentication.isAuthenticated()){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public List<Users> getUsers(){
